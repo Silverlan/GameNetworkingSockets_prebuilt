@@ -1,0 +1,77 @@
+name: Windows build
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          submodules: 'recursive'
+
+      - name: Clone vcpkg
+        shell: bash
+        run: |
+          cd GameNetworkingSockets
+          git clone https://github.com/microsoft/vcpkg
+
+      - name: Bootstrap vcpkg
+        shell: bash
+        run: |
+          cd GameNetworkingSockets
+          cmd.exe /c ".\\vcpkg\\bootstrap-vcpkg.bat"
+
+      - name: Setup MSVC dev cmd
+        uses: ilammy/msvc-dev-cmd@v1
+
+      - name: Install libraries with vcpkg
+        shell: bash
+        run: |
+          cd GameNetworkingSockets
+          cmd.exe /c ".\\vcpkg\\vcpkg.exe install --triplet=x64-windows"
+
+      - name: Configure with CMake
+        shell: bash
+        run: |
+          cd GameNetworkingSockets
+          cmake -S . -B build -G Ninja -DBUILD_EXAMPLES=ON -DBUILD_TESTS=ON -DUSE_STEAMWEBRTC=ON
+
+      - name: Build
+        shell: bash
+        run: |
+          cd GameNetworkingSockets
+          cd build
+          ninja
+
+      - name: Copy Release Files
+        shell: bash
+        run: |
+          curDir=$PWD
+          mkdir -p release
+          cd release
+          mkdir include
+          mkdir lib
+          mkdir bin
+
+          cp -a "$curDir/GameNetworkingSockets/include/" "."
+          find "$curDir/GameNetworkingSockets/build/src" -type f \( -name '*.lib' \) -print0 | xargs -0 -I{} cp {} lib/
+          find "$curDir/GameNetworkingSockets/build/bin" -type f \( -name '*.dll' \) -print0 | xargs -0 -I{} cp {} bin/
+
+      - name: Release Binaries
+        uses: Silverlan/common_actions/release_nightly_binaries@main
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit: ${{ github.ref_name }}
+          tag: "${{ github.event.inputs.tag }}"
