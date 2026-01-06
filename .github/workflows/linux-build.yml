@@ -33,7 +33,7 @@ jobs:
           cd GameNetworkingSockets
           mkdir build
           cd build
-          cmake -G Ninja .. -DBUILD_EXAMPLES=ON -DBUILD_TESTS=ON -DUSE_STEAMWEBRTC=ON
+          cmake -G Ninja .. -DBUILD_EXAMPLES=OFF -DBUILD_TESTS=OFF -DUSE_STEAMWEBRTC=ON -DCMAKE_BUILD_TYPE=Release
 
       - name: Build
         shell: bash

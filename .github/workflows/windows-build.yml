@@ -46,7 +46,7 @@ jobs:
         shell: bash
         run: |
           cd GameNetworkingSockets
-          cmake -S . -B build -G Ninja -DBUILD_EXAMPLES=ON -DBUILD_TESTS=ON -DUSE_STEAMWEBRTC=ON
+          cmake -S . -B build -G Ninja -DBUILD_EXAMPLES=OFF -DBUILD_TESTS=OFF -DUSE_STEAMWEBRTC=ON -DCMAKE_BUILD_TYPE=Release
 
       - name: Build
         shell: bash
