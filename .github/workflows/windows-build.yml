@@ -75,4 +75,4 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit: ${{ github.ref_name }}
           tag: "${{ github.event.inputs.tag }}"
-          release_suffix: '-clang'
+          release_suffix: '-msvc'
