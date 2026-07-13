@@ -53,7 +53,6 @@ jobs:
 
           cp -a "$curDir/GameNetworkingSockets/include/" "."
           find "$curDir/GameNetworkingSockets/build/src" -type f \( -name '*.a' -o -name '*.so' \) -print0 | xargs -0 -I{} cp {} lib/
-          find "$curDir/GameNetworkingSockets/build/lib" -type f \( -name '*.a' -o -name '*.so' \) -print0 | xargs -0 -I{} cp {} lib/
 
       - name: Release Binaries
         uses: Silverlan/common_actions/release_nightly_binaries@main
